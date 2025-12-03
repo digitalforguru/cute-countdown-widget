@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aesthetic Countdown Widget</title>
+<title>cute countdown widget</title>
 <!-- Mogula font -->
 <link href="https://fonts.cdnfonts.com/css/mogula" rel="stylesheet">
 <style>
@@ -85,7 +85,7 @@
 
 <!-- Inputs outside the widget -->
 <div class="inputs">
-  <input type="text" id="countdownName" placeholder="Name your countdown 🌸">
+  <input type="text" id="countdownName" placeholder="name your countdown!">
   <input type="date" id="countdownDate">
   <div class="themes">
     <div class="theme-circle" style="background: #ffe4e1;" data-theme="#ffe4e1"></div>
@@ -97,7 +97,7 @@
 
 <!-- Countdown card -->
 <div class="widget" id="widget">
-  <h2 id="displayName">Your Countdown</h2>
+  <h2 id="displayName">your countdown</h2>
   <p id="displayCountdown">0d 0h 0m 0s</p>
 </div>
 
@@ -139,7 +139,7 @@ function updateCountdown() {
       const seconds = Math.floor((diff / 1000) % 60);
       displayCountdown.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
     } else {
-      displayCountdown.textContent = "🎉 Time's up! 🎉";
+      displayCountdown.textContent = ".𖥔 ݁ ˖ it's time! .𖥔 ݁ ˖";
     }
   }
 }
