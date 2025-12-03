@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aesthetic Countdown Widget</title>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+<style>
+  body { font-family: 'Arial', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #fdf6f0; }
+  .widget { background: #ffe4e1; border-radius: 20px; padding: 25px; width: 300px; text-align: center; box-shadow: 0 8px 15px rgba(0,0,0,0.1); transition: background 0.3s ease; }
+  input { padding: 8px; border-radius: 10px; border: 1px solid #ccc; margin: 10px 0; width: 90%; font-size: 14px; }
+  h2 { font-family: 'Pacifico', cursive; font-size: 22px; color: #d65a88; margin: 10px 0; }
+  p { font-size: 18px; margin: 10px 0; color: #333; }
+  .themes { display: flex; justify-content: center; margin-top: 15px; }
+  .theme-circle { width: 30px; height: 30px; border-radius: 50%; margin: 0 5px; cursor: pointer; border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.2); transition: transform 0.2s; }
+  .theme-circle:hover { transform: scale(1.2); }
+</style>
+</head>
+<body>
+
+<div class="widget" id="widget">
+  <input type="text" id="countdownName" placeholder="Name your countdown">
+  <input type="date" id="countdownDate">
+  <h2 id="displayName">Your Countdown</h2>
+  <p id="displayCountdown">0 days</p>
+
+  <div class="themes">
+    <div class="theme-circle" style="background: #ffe4e1;" data-theme="#ffe4e1"></div>
+    <div class="theme-circle" style="background: #d8bfd8;" data-theme="#d8bfd8"></div>
+    <div class="theme-circle" style="background: #fdf6e3;" data-theme="#fdf6e3"></div>
+    <div class="theme-circle" style="background: #cfe0e8;" data-theme="#cfe0e8"></div>
+  </div>
+</div>
+
+<script>
+const nameInput = document.getElementById('countdownName');
+const dateInput = document.getElementById('countdownDate');
+const displayName = document.getElementById('displayName');
+const displayCountdown = document.getElementById('displayCountdown');
+const widget = document.getElementById('widget');
+const themeCircles = document.querySelectorAll('.theme-circle');
+
+// Load saved data
+if(localStorage.getItem('countdownName')) {
+  nameInput.value = localStorage.getItem('countdownName');
+  displayName.textContent = localStorage.getItem('countdownName');
+}
+if(localStorage.getItem('countdownDate')) {
+  dateInput.value = localStorage.getItem('countdownDate');
+}
+if(localStorage.getItem('countdownTheme')) {
+  widget.style.background = localStorage.getItem('countdownTheme');
+}
+
+// Update countdown every second
+function updateCountdown() {
+  const name = nameInput.value || "Your Countdown";
+  const date = new Date(dateInput.value);
+  displayName.textContent = name;
+  localStorage.setItem('countdownName', name);
+  localStorage.setItem('countdownDate', dateInput.value);
+
+  if(dateInput.value) {
+    const now = new Date();
+    const diff = date - now;
+    if(diff > 0) {
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((diff / (1000 * 60)) % 60);
+      const seconds = Math.floor((diff / 1000) % 60);
+      displayCountdown.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+    } else {
+      displayCountdown.textContent = "🎉 Time's up! 🎉";
+    }
+  }
+}
+
+// Theme selection
+themeCircles.forEach(circle => {
+  circle.addEventListener('click', () => {
+    const color = circle.dataset.theme;
+    widget.style.background = color;
+    localStorage.setItem('countdownTheme', color);
+  });
+});
+
+nameInput.addEventListener('input', updateCountdown);
+dateInput.addEventListener('input', updateCountdown);
+
+setInterval(updateCountdown, 1000);
+updateCountdown();
+</script>
+
+</body>
+</html>
