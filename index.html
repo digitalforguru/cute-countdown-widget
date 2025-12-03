@@ -69,14 +69,14 @@
   .widget h2 {
     font-family: 'Mogula', sans-serif;
     font-size: 28px;
-    color: #d65a88;
+    color: #000; /* default black */
     margin: 0 0 10px 0;
   }
 
   .widget p {
     font-family: 'Mogula', sans-serif;
     font-size: 22px;
-    color: #333;
+    color: #000; /* countdown text */
     margin: 0;
   }
 </style>
@@ -85,7 +85,7 @@
 
 <!-- Inputs outside the widget -->
 <div class="inputs">
-  <input type="text" id="countdownName" placeholder="name your countdown!">
+  <input type="text" id="countdownName" placeholder="Name your countdown 🌸">
   <input type="date" id="countdownDate">
   <div class="themes">
     <div class="theme-circle" style="background: #ffe4e1;" data-theme="#ffe4e1"></div>
@@ -97,7 +97,7 @@
 
 <!-- Countdown card -->
 <div class="widget" id="widget">
-  <h2 id="displayName">your countdown</h2>
+  <h2 id="displayName">your countdown!</h2>
   <p id="displayCountdown">0d 0h 0m 0s</p>
 </div>
 
@@ -109,6 +109,25 @@ const displayCountdown = document.getElementById('displayCountdown');
 const widget = document.getElementById('widget');
 const themeCircles = document.querySelectorAll('.theme-circle');
 
+// Function to slightly darken a hex color
+function darkenColor(hex, amount = 0.2) {
+  hex = hex.replace("#","");
+
+  let r = parseInt(hex.substring(0,2),16);
+  let g = parseInt(hex.substring(2,4),16);
+  let b = parseInt(hex.substring(4,6),16);
+
+  r = Math.floor(r * (1 - amount));
+  g = Math.floor(g * (1 - amount));
+  b = Math.floor(b * (1 - amount));
+
+  r = r.toString(16).padStart(2,'0');
+  g = g.toString(16).padStart(2,'0');
+  b = b.toString(16).padStart(2,'0');
+
+  return `#${r}${g}${b}`;
+}
+
 // Load saved data
 if(localStorage.getItem('countdownName')) {
   nameInput.value = localStorage.getItem('countdownName');
@@ -118,7 +137,9 @@ if(localStorage.getItem('countdownDate')) {
   dateInput.value = localStorage.getItem('countdownDate');
 }
 if(localStorage.getItem('countdownTheme')) {
-  widget.style.background = localStorage.getItem('countdownTheme');
+  const themeColor = localStorage.getItem('countdownTheme');
+  widget.style.background = themeColor;
+  displayName.style.color = darkenColor(themeColor, 0.3);
 }
 
 // Update countdown every second
@@ -149,6 +170,7 @@ themeCircles.forEach(circle => {
   circle.addEventListener('click', () => {
     const color = circle.dataset.theme;
     widget.style.background = color;
+    displayName.style.color = darkenColor(color, 0.3); // slightly darker for text
     localStorage.setItem('countdownTheme', color);
   });
 });
