@@ -79,6 +79,39 @@
   .edit-btn:hover {
     color: #d65a88;
   }
+
+  /* Inline edit form */
+  .edit-form {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 12px;
+  }
+
+  .edit-form input {
+    padding: 6px 10px;
+    margin: 5px 0;
+    width: 80%;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+  }
+
+  .edit-form button {
+    margin-top: 5px;
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: none;
+    background: #d65a88;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .edit-form button:hover {
+    background: #b04870;
+  }
 </style>
 </head>
 <body>
@@ -87,11 +120,18 @@
   <span class="edit-btn" id="editBtn">✏️</span>
   <h2 id="displayName">Your Countdown</h2>
   <p id="displayCountdown">0d 0h 0m 0s</p>
+
   <div class="themes" id="themes">
     <div class="theme-circle" style="background: #ffe4e1;" data-theme="#ffe4e1"></div>
     <div class="theme-circle" style="background: #d8bfd8;" data-theme="#d8bfd8"></div>
     <div class="theme-circle" style="background: #fdf6e3;" data-theme="#fdf6e3"></div>
     <div class="theme-circle" style="background: #cfe0e8;" data-theme="#cfe0e8"></div>
+  </div>
+
+  <div class="edit-form" id="editForm">
+    <input type="text" id="editName" placeholder="Countdown Name">
+    <input type="date" id="editDate">
+    <button id="saveBtn">Save</button>
   </div>
 </div>
 
@@ -101,8 +141,12 @@ const displayCountdown = document.getElementById('displayCountdown');
 const widget = document.getElementById('widget');
 const themeCircles = document.querySelectorAll('.theme-circle');
 const editBtn = document.getElementById('editBtn');
+const editForm = document.getElementById('editForm');
+const editName = document.getElementById('editName');
+const editDate = document.getElementById('editDate');
+const saveBtn = document.getElementById('saveBtn');
 
-// Slightly darken hex color
+// Darken color for text
 function darkenColor(hex, amount = 0.3) {
   hex = hex.replace("#","");
   let r = parseInt(hex.substring(0,2),16);
@@ -117,30 +161,17 @@ function darkenColor(hex, amount = 0.3) {
   return `#${r}${g}${b}`;
 }
 
-// Load saved data or prompt
-let countdownName = localStorage.getItem('countdownName');
-let countdownDate = localStorage.getItem('countdownDate');
-let countdownTheme = localStorage.getItem('countdownTheme');
+// Load saved data or default
+let countdownName = localStorage.getItem('countdownName') || "Your Countdown";
+let countdownDate = localStorage.getItem('countdownDate') || new Date().toISOString().slice(0,10);
+let countdownTheme = localStorage.getItem('countdownTheme') || "#ffe4e1";
 
-if(!countdownName) {
-  countdownName = prompt("Name your countdown 🌸") || "Your Countdown";
-  localStorage.setItem('countdownName', countdownName);
-}
-if(!countdownDate) {
-  countdownDate = prompt("Enter countdown date (YYYY-MM-DD)") || new Date().toISOString().slice(0,10);
-  localStorage.setItem('countdownDate', countdownDate);
-}
-if(!countdownTheme) {
-  countdownTheme = "#ffe4e1";
-  localStorage.setItem('countdownTheme', countdownTheme);
-}
-
-// Apply saved theme
+// Apply saved theme and values
 widget.style.background = countdownTheme;
 displayName.style.color = darkenColor(countdownTheme, 0.3);
 displayName.textContent = countdownName;
 
-// Countdown logic
+// Update countdown every second
 function updateCountdown() {
   const date = new Date(countdownDate);
   displayName.textContent = countdownName;
@@ -165,23 +196,26 @@ themeCircles.forEach(circle => {
     const color = circle.dataset.theme;
     widget.style.background = color;
     displayName.style.color = darkenColor(color, 0.3);
+    countdownTheme = color;
     localStorage.setItem('countdownTheme', color);
   });
 });
 
-// Edit button functionality
+// Show/hide edit form
 editBtn.addEventListener('click', () => {
-  const newName = prompt("Edit countdown name:", countdownName);
-  if(newName) {
-    countdownName = newName;
-    localStorage.setItem('countdownName', countdownName);
-  }
-  const newDate = prompt("Edit countdown date (YYYY-MM-DD):", countdownDate);
-  if(newDate) {
-    countdownDate = newDate;
-    localStorage.setItem('countdownDate', countdownDate);
-  }
+  editForm.style.display = editForm.style.display === "flex" ? "none" : "flex";
+  editName.value = countdownName;
+  editDate.value = countdownDate;
+});
+
+// Save new values
+saveBtn.addEventListener('click', () => {
+  countdownName = editName.value || countdownName;
+  countdownDate = editDate.value || countdownDate;
+  localStorage.setItem('countdownName', countdownName);
+  localStorage.setItem('countdownDate', countdownDate);
   updateCountdown();
+  editForm.style.display = "none";
 });
 
 setInterval(updateCountdown, 1000);
