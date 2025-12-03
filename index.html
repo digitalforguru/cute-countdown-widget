@@ -9,85 +9,68 @@
 <style>
   body {
     font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
     display: flex;
     justify-content: center;
     align-items: center;
-    flex-direction: column;
-    height: 100vh;
-    background: #fdf6f0;
+    height: 100%;
+    background: transparent;
   }
 
-  /* Input section outside the widget */
-  .inputs {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 20px;
+  .widget {
+    background: rgba(transparent); /* subtle transparent bg */
+    border-radius: 20px;
+    padding: 30px 15px;
+    width: 100%;
+    max-width: 300px;
+    text-align: center;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.05);
+    transition: background 0.3s ease;
+    backdrop-filter: blur(5px);
   }
 
-  .inputs input {
-    padding: 10px;
-    border-radius: 10px;
-    border: 1px solid #ccc;
-    margin: 5px 0;
-    width: 250px;
-    font-size: 14px;
+  .widget h2 {
+    font-family: 'Mogula', sans-serif;
+    font-size: 26px;
+    margin: 0 0 10px 0;
+    color: #000;
+  }
+
+  .widget p {
+    font-family: 'Mogula', sans-serif;
+    font-size: 20px;
+    margin: 0;
+    color: #000;
   }
 
   .themes {
     display: flex;
     justify-content: center;
-    margin-top: 10px;
+    margin-top: 12px;
   }
 
   .theme-circle {
-    width: 30px;
-    height: 30px;
+    width: 25px;
+    height: 25px;
     border-radius: 50%;
     margin: 0 5px;
     cursor: pointer;
     border: 2px solid #fff;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     transition: transform 0.2s;
   }
 
   .theme-circle:hover {
     transform: scale(1.2);
   }
-
-  /* Countdown widget */
-  .widget {
-    background: #ffe4e1;
-    border-radius: 25px;
-    padding: 40px 20px;
-    width: 300px;
-    text-align: center;
-    box-shadow: 0 8px 15px rgba(0,0,0,0.1);
-    transition: background 0.3s ease;
-  }
-
-  .widget h2 {
-    font-family: 'Mogula', sans-serif;
-    font-size: 28px;
-    color: #000; /* default black */
-    margin: 0 0 10px 0;
-  }
-
-  .widget p {
-    font-family: 'Mogula', sans-serif;
-    font-size: 22px;
-    color: #000; /* countdown text */
-    margin: 0;
-  }
 </style>
 </head>
 <body>
 
-<!-- Inputs outside the widget -->
-<div class="inputs">
-  <input type="text" id="countdownName" placeholder="Name your countdown 🌸">
-  <input type="date" id="countdownDate">
-  <div class="themes">
+<div class="widget" id="widget">
+  <h2 id="displayName">your countdown</h2>
+  <p id="displayCountdown">0d 0h 0m 0s</p>
+  <div class="themes" id="themes">
     <div class="theme-circle" style="background: #ffe4e1;" data-theme="#ffe4e1"></div>
     <div class="theme-circle" style="background: #d8bfd8;" data-theme="#d8bfd8"></div>
     <div class="theme-circle" style="background: #fdf6e3;" data-theme="#fdf6e3"></div>
@@ -95,68 +78,72 @@
   </div>
 </div>
 
-<!-- Countdown card -->
-<div class="widget" id="widget">
-  <h2 id="displayName">your countdown!</h2>
-  <p id="displayCountdown">0d 0h 0m 0s</p>
-</div>
-
 <script>
-const nameInput = document.getElementById('countdownName');
-const dateInput = document.getElementById('countdownDate');
 const displayName = document.getElementById('displayName');
 const displayCountdown = document.getElementById('displayCountdown');
 const widget = document.getElementById('widget');
 const themeCircles = document.querySelectorAll('.theme-circle');
 
 // Function to slightly darken a hex color
-function darkenColor(hex, amount = 0.2) {
+function darkenColor(hex, amount = 0.3) {
   hex = hex.replace("#","");
-
   let r = parseInt(hex.substring(0,2),16);
   let g = parseInt(hex.substring(2,4),16);
   let b = parseInt(hex.substring(4,6),16);
-
   r = Math.floor(r * (1 - amount));
   g = Math.floor(g * (1 - amount));
   b = Math.floor(b * (1 - amount));
-
   r = r.toString(16).padStart(2,'0');
   g = g.toString(16).padStart(2,'0');
   b = b.toString(16).padStart(2,'0');
-
   return `#${r}${g}${b}`;
 }
 
-// Load saved data
-if(localStorage.getItem('countdownName')) {
-  nameInput.value = localStorage.getItem('countdownName');
-  displayName.textContent = localStorage.getItem('countdownName');
+// Load saved data or prompt user
+let countdownName = localStorage.getItem('countdownName');
+let countdownDate = localStorage.getItem('countdownDate');
+let countdownTheme = localStorage.getItem('countdownTheme');
+
+// Prompt user for missing data
+if(!countdownName) {
+  countdownName = prompt("name your countdown") || "your countdown";
+  localStorage.setItem('countdownName', countdownName);
 }
-if(localStorage.getItem('countdownDate')) {
-  dateInput.value = localStorage.getItem('countdownDate');
+if(!countdownDate) {
+  countdownDate = prompt("enter your countdown date! (YYYY-MM-DD)") || new Date().toISOString().slice(0,10);
+  localStorage.setItem('countdownDate', countdownDate);
 }
-if(localStorage.getItem('countdownTheme')) {
-  const themeColor = localStorage.getItem('countdownTheme');
-  widget.style.background = themeColor;
-  displayName.style.color = darkenColor(themeColor, 0.3);
+if(!countdownTheme) {
+  countdownTheme = "#ffe4e1";
+  localStorage.setItem('countdownTheme', countdownTheme);
 }
 
-// Update countdown every second
+// Apply saved theme
+widget.style.background = countdownTheme;
+displayName.style.color = darkenColor(countdownTheme, 0.3);
+displayName.textContent = countdownName;
+
+// Theme circle click
+themeCircles.forEach(circle => {
+  circle.addEventListener('click', () => {
+    const color = circle.dataset.theme;
+    widget.style.background = color;
+    displayName.style.color = darkenColor(color, 0.3);
+    localStorage.setItem('countdownTheme', color);
+  });
+});
+
+// Countdown logic
 function updateCountdown() {
-  const name = nameInput.value || "Your Countdown";
-  const date = new Date(dateInput.value);
-  displayName.textContent = name;
-  localStorage.setItem('countdownName', name);
-  localStorage.setItem('countdownDate', dateInput.value);
-
-  if(dateInput.value) {
+  const date = new Date(countdownDate);
+  displayName.textContent = countdownName;
+  if(date) {
     const now = new Date();
     const diff = date - now;
     if(diff > 0) {
-      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-      const minutes = Math.floor((diff / (1000 * 60)) % 60);
+      const days = Math.floor(diff / (1000*60*60*24));
+      const hours = Math.floor((diff / (1000*60*60)) % 24);
+      const minutes = Math.floor((diff / (1000*60)) % 60);
       const seconds = Math.floor((diff / 1000) % 60);
       displayCountdown.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
     } else {
@@ -164,19 +151,6 @@ function updateCountdown() {
     }
   }
 }
-
-// Theme selection
-themeCircles.forEach(circle => {
-  circle.addEventListener('click', () => {
-    const color = circle.dataset.theme;
-    widget.style.background = color;
-    displayName.style.color = darkenColor(color, 0.3); // slightly darker for text
-    localStorage.setItem('countdownTheme', color);
-  });
-});
-
-nameInput.addEventListener('input', updateCountdown);
-dateInput.addEventListener('input', updateCountdown);
 
 setInterval(updateCountdown, 1000);
 updateCountdown();
