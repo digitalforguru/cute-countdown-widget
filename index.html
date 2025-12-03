@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>cute countdown widget</title>
+<title>Notion Embed Countdown Widget</title>
 <!-- Mogula font -->
 <link href="https://fonts.cdnfonts.com/css/mogula" rel="stylesheet">
 <style>
@@ -19,7 +19,7 @@
   }
 
   .widget {
-    background: rgba(transparent); /* subtle transparent bg */
+    background: rgba(255, 255, 255, 0.1);
     border-radius: 20px;
     padding: 30px 15px;
     width: 100%;
@@ -28,6 +28,7 @@
     box-shadow: 0 6px 12px rgba(0,0,0,0.05);
     transition: background 0.3s ease;
     backdrop-filter: blur(5px);
+    position: relative;
   }
 
   .widget h2 {
@@ -63,12 +64,28 @@
   .theme-circle:hover {
     transform: scale(1.2);
   }
+
+  /* Edit button */
+  .edit-btn {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    cursor: pointer;
+    font-size: 18px;
+    color: #555;
+    transition: color 0.2s;
+  }
+
+  .edit-btn:hover {
+    color: #d65a88;
+  }
 </style>
 </head>
 <body>
 
 <div class="widget" id="widget">
-  <h2 id="displayName">your countdown</h2>
+  <span class="edit-btn" id="editBtn">✏️</span>
+  <h2 id="displayName">Your Countdown</h2>
   <p id="displayCountdown">0d 0h 0m 0s</p>
   <div class="themes" id="themes">
     <div class="theme-circle" style="background: #ffe4e1;" data-theme="#ffe4e1"></div>
@@ -83,8 +100,9 @@ const displayName = document.getElementById('displayName');
 const displayCountdown = document.getElementById('displayCountdown');
 const widget = document.getElementById('widget');
 const themeCircles = document.querySelectorAll('.theme-circle');
+const editBtn = document.getElementById('editBtn');
 
-// Function to slightly darken a hex color
+// Slightly darken hex color
 function darkenColor(hex, amount = 0.3) {
   hex = hex.replace("#","");
   let r = parseInt(hex.substring(0,2),16);
@@ -99,18 +117,17 @@ function darkenColor(hex, amount = 0.3) {
   return `#${r}${g}${b}`;
 }
 
-// Load saved data or prompt user
+// Load saved data or prompt
 let countdownName = localStorage.getItem('countdownName');
 let countdownDate = localStorage.getItem('countdownDate');
 let countdownTheme = localStorage.getItem('countdownTheme');
 
-// Prompt user for missing data
 if(!countdownName) {
-  countdownName = prompt("name your countdown") || "your countdown";
+  countdownName = prompt("Name your countdown 🌸") || "Your Countdown";
   localStorage.setItem('countdownName', countdownName);
 }
 if(!countdownDate) {
-  countdownDate = prompt("enter your countdown date! (YYYY-MM-DD)") || new Date().toISOString().slice(0,10);
+  countdownDate = prompt("Enter countdown date (YYYY-MM-DD)") || new Date().toISOString().slice(0,10);
   localStorage.setItem('countdownDate', countdownDate);
 }
 if(!countdownTheme) {
@@ -122,16 +139,6 @@ if(!countdownTheme) {
 widget.style.background = countdownTheme;
 displayName.style.color = darkenColor(countdownTheme, 0.3);
 displayName.textContent = countdownName;
-
-// Theme circle click
-themeCircles.forEach(circle => {
-  circle.addEventListener('click', () => {
-    const color = circle.dataset.theme;
-    widget.style.background = color;
-    displayName.style.color = darkenColor(color, 0.3);
-    localStorage.setItem('countdownTheme', color);
-  });
-});
 
 // Countdown logic
 function updateCountdown() {
@@ -147,10 +154,35 @@ function updateCountdown() {
       const seconds = Math.floor((diff / 1000) % 60);
       displayCountdown.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
     } else {
-      displayCountdown.textContent = ".𖥔 ݁ ˖ it's time! .𖥔 ݁ ˖";
+      displayCountdown.textContent = "🎉 Time's up! 🎉";
     }
   }
 }
+
+// Theme selection
+themeCircles.forEach(circle => {
+  circle.addEventListener('click', () => {
+    const color = circle.dataset.theme;
+    widget.style.background = color;
+    displayName.style.color = darkenColor(color, 0.3);
+    localStorage.setItem('countdownTheme', color);
+  });
+});
+
+// Edit button functionality
+editBtn.addEventListener('click', () => {
+  const newName = prompt("Edit countdown name:", countdownName);
+  if(newName) {
+    countdownName = newName;
+    localStorage.setItem('countdownName', countdownName);
+  }
+  const newDate = prompt("Edit countdown date (YYYY-MM-DD):", countdownDate);
+  if(newDate) {
+    countdownDate = newDate;
+    localStorage.setItem('countdownDate', countdownDate);
+  }
+  updateCountdown();
+});
 
 setInterval(updateCountdown, 1000);
 updateCountdown();
