@@ -345,3 +345,15 @@ body {
 .hidden {
   display: none !important;
 }
+
+.widget.font-default {
+  font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.widget.font-serif {
+  font-family: Georgia, serif;
+}
+
+.widget.font-mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
