@@ -86,6 +86,14 @@ function updateUI() {
 function setIcon(icon) {
   state.icon = icon;
   iconDisplay.src = "./assets/icons/" + state.icon + ".svg";
+
+  // remove any previous sizing classes
+  iconDisplay.classList.remove("icon-wide");
+
+  // apply special sizing for icon 4
+  if (state.icon === "4") {
+    iconDisplay.classList.add("icon-wide");
+  }
 }
 
 /* ---------------- THEME ---------------- */
