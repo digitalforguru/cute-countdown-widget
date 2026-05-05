@@ -95,13 +95,18 @@ body {
   font-size: 18px;
 }
 
-/* 🎨 theme button (ALWAYS pink like you wanted) */
 .theme-btn {
   width: 20px;
   height: 20px;
+
   border-radius: 50%;
-  background: #f4dfeb;
+
+  background-color: #f4dfeb; /* ALWAYS pink */
   border: 2px solid white;
+
+  box-sizing: border-box;
+
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
 }
 
 /* 🔤 font button */
@@ -229,8 +234,8 @@ body {
   transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
 .icon-option img {
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
 
   pointer-events: none;
 }
@@ -240,13 +245,13 @@ body {
   box-shadow: 0 6px 14px rgba(0,0,0,0.12);
 }
 .countdown-icon {
-  width: 36px;
-  height: 36px;
+  width: 39px;
+  height: 39px;
 }
 
 /* OVERRIDE FOR WIDE ICON */
 .countdown-icon.icon-wide {
-  width: 64px;
+  width: 72px;
   height: auto;
 }
 
