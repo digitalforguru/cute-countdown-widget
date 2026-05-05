@@ -20,6 +20,8 @@ const fontBtn = document.getElementById("fontToggle");
 const fontOptions = document.getElementById("fontOptions");
 
 const copyBtn = document.getElementById("copyLinkBtn");
+const iconTabs = document.querySelectorAll(".icon-tab");
+const iconOptions = document.querySelectorAll(".icon-option");
 
 /* ---------------- URL PARAMS ---------------- */
 const params = new URLSearchParams(window.location.search);
@@ -96,6 +98,30 @@ function setIcon(icon) {
   }
 }
 
+/* ---------------- ICON CATEGORY FILTER ---------------- */
+
+iconTabs.forEach(tab => {
+  tab.addEventListener("click", () => {
+
+    // active state styling
+    iconTabs.forEach(t => t.classList.remove("active"));
+    tab.classList.add("active");
+
+    const category = tab.dataset.category;
+
+    iconOptions.forEach(icon => {
+      const iconCategory = icon.dataset.category;
+
+      if (category === "all") {
+        icon.style.display = "flex";
+      } else {
+        icon.style.display =
+          iconCategory === category ? "flex" : "none";
+      }
+    });
+
+  });
+});
 /* ---------------- THEME ---------------- */
 function setTheme(theme) {
   state.theme = theme;
