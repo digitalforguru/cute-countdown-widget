@@ -35,6 +35,11 @@ let state = {
   font: params.get("font") || "default"
 };
 
+
+if (params.get("icon")) {
+  state.icon = params.get("icon");
+}
+
 /* hide builder in embed */
 if (isEmbed) {
   const builder = document.querySelector(".builder-ui");
@@ -80,12 +85,16 @@ function updateCountdown() {
 
 /* ---------------- APPLY UI ---------------- */
 function updateUI() {
-  iconDisplay.textContent = state.icon;
+  iconDisplay.src = `assets/icons/${state.icon}.svg`;
   titleDisplay.textContent = state.label.toLowerCase();
 
   updateCountdown();
 }
 
+function setIcon(icon) {
+  state.icon = icon;
+  iconDisplay.src = `assets/icons/${icon}.svg`;
+}
 /* ---------------- THEME ---------------- */
 function setTheme(theme) {
   state.theme = theme;
@@ -146,7 +155,7 @@ labelInput?.addEventListener("input", () => {
 /* ---------------- ICON SELECT ---------------- */
 document.querySelectorAll(".icon-option").forEach(el => {
   el.addEventListener("click", () => {
-    state.icon = el.dataset.icon;
+    setIcon(el.dataset.icon);
     updateUI();
   });
 });
@@ -204,4 +213,5 @@ if (labelInput) labelInput.value = state.label;
 
 setTheme(state.theme);
 setFont(state.font);
+setIcon(state.icon);
 updateUI();
