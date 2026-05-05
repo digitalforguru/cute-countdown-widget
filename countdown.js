@@ -35,8 +35,6 @@ let state = {
   font: params.get("font") || "default"
 };
 
-
-
 /* hide builder in embed */
 if (isEmbed) {
   const builder = document.querySelector(".builder-ui");
@@ -63,7 +61,6 @@ function updateCountdown() {
   const fromDate = new Date(state.from);
   const toDate = new Date(state.to);
 
-  const total = Math.ceil((toDate - fromDate) / (1000 * 60 * 60 * 24));
   const remaining = Math.ceil((toDate - now) / (1000 * 60 * 60 * 24));
   const untilStart = Math.ceil((fromDate - now) / (1000 * 60 * 60 * 24));
 
@@ -82,16 +79,15 @@ function updateCountdown() {
 
 /* ---------------- APPLY UI ---------------- */
 function updateUI() {
-  iconDisplay.src = `/assets/icons/${state.icon}.svg`;
   titleDisplay.textContent = state.label.toLowerCase();
-
   updateCountdown();
 }
 
 function setIcon(icon) {
   state.icon = icon;
-  iconDisplay.src = "/assets/icons/" + state.icon + ".svg";
+  iconDisplay.src = "./assets/icons/" + state.icon + ".svg";
 }
+
 /* ---------------- THEME ---------------- */
 function setTheme(theme) {
   state.theme = theme;
